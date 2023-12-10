@@ -9,7 +9,7 @@
             public Doctor? doctor { get; set; }
 
              [ForeignKey("ApplicationUser")]
-              public string UserId { get; set; }
+              public string PatientId { get; set; }
               public ApplicationUser User { get; set; }
 
       
