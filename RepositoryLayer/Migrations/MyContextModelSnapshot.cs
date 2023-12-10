@@ -46,24 +46,21 @@ namespace EFLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5ab58670-8727-4b67-85d5-4199912a70bf",
-                            Date = "12/3/2023 8:33:32 PM",
+                            Id = "1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "3f3ee49a-4441-4303-b550-84d57255a24c",
-                            Date = "12/3/2023 8:33:32 PM",
-                            Name = "Patient",
-                            NormalizedName = "Patient"
+                            Id = "2",
+                            Name = "Doctor",
+                            NormalizedName = "DOCTOR"
                         },
                         new
                         {
-                            Id = "596a7b4b-2907-4729-adbb-866cad99185c",
-                            Date = "12/3/2023 8:33:32 PM",
-                            Name = "Doctor",
-                            NormalizedName = "Doctor"
+                            Id = "3",
+                            Name = "Patient",
+                            NormalizedName = "PATIENT"
                         });
                 });
 
@@ -98,6 +95,9 @@ namespace EFLayer.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -113,9 +113,6 @@ namespace EFLayer.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -151,6 +148,26 @@ namespace EFLayer.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "76f86073-b51c-47c4-b7fa-731628055ebb",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "4266d9ad-2234-4b3c-926e-3ef2a031807e",
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            IsDeleted = false,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "ADMIN@GMAIL.COM",
+                            NormalizedUserName = "ADMIN@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDp7h29XMOxsL/ceO3ZvCVIits3U0BR4N5pN/ykDTSMVJGqwUJKA+0KuC8W/t9xd0w==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "3d9356ed-2ed5-49e7-b445-bafdfe2a4c0a",
+                            TwoFactorEnabled = false,
+                            Type = 0,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("DomainLayer.Models.Appointment", b =>
@@ -164,15 +181,13 @@ namespace EFLayer.Migrations
                     b.Property<int>("Day")
                         .HasColumnType("int");
 
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DoctorId1")
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("AppointmentId");
 
-                    b.HasIndex("DoctorId1");
+                    b.HasIndex("DoctorId");
 
                     b.ToTable("Appointments");
                 });
@@ -194,10 +209,16 @@ namespace EFLayer.Migrations
                     b.Property<int>("DiscountType")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(18, 4)");
 
                     b.HasKey("DiscountCodeId");
+
+                    b.HasIndex("CompletedRequests")
+                        .IsUnique();
 
                     b.ToTable("DiscountCodes");
                 });
@@ -207,11 +228,7 @@ namespace EFLayer.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("DoctorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18, 4)");
 
                     b.Property<int>("SpecializationId")
@@ -224,20 +241,6 @@ namespace EFLayer.Migrations
                     b.ToTable("Doctors");
                 });
 
-            modelBuilder.Entity("DomainLayer.Models.Patient", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PatientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Patients");
-                });
-
             modelBuilder.Entity("DomainLayer.Models.Request", b =>
                 {
                     b.Property<int>("RequestId")
@@ -245,6 +248,9 @@ namespace EFLayer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("DiscountCodeId")
                         .HasColumnType("int");
@@ -256,23 +262,21 @@ namespace EFLayer.Migrations
                     b.Property<decimal>("FinalPrice")
                         .HasColumnType("decimal(18, 4)");
 
-                    b.Property<string>("PatientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<TimeSpan>("times")
-                        .HasColumnType("time");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("RequestId");
 
-                    b.HasIndex("DiscountCodeId");
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Requests");
                 });
@@ -426,26 +430,11 @@ namespace EFLayer.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<string>");
-
-                    b.UseTphMappingStrategy();
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "76f86073-b51c-47c4-b7fa-731628055ebb",
-                            RoleId = "5ab58670-8727-4b67-85d5-4199912a70bf"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -467,30 +456,26 @@ namespace EFLayer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DomainLayer.Models.UserRole", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("RoleId1");
-
-                    b.HasDiscriminator().HasValue("UserRole");
-                });
-
             modelBuilder.Entity("DomainLayer.Models.Appointment", b =>
                 {
                     b.HasOne("DomainLayer.Models.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId1");
+                        .WithMany("Appointments")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("DomainLayer.Models.DiscountCode", b =>
+                {
+                    b.HasOne("DomainLayer.Models.Request", "Request")
+                        .WithOne("DiscountCode")
+                        .HasForeignKey("DomainLayer.Models.DiscountCode", "CompletedRequests")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("DomainLayer.Models.Doctor", b =>
@@ -512,22 +497,13 @@ namespace EFLayer.Migrations
                     b.Navigation("Specialization");
                 });
 
-            modelBuilder.Entity("DomainLayer.Models.Patient", b =>
-                {
-                    b.HasOne("DomainLayer.Models.ApplicationUser", "ApplicationUser")
-                        .WithOne("PatientProfile")
-                        .HasForeignKey("DomainLayer.Models.Patient", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-                });
-
             modelBuilder.Entity("DomainLayer.Models.Request", b =>
                 {
-                    b.HasOne("DomainLayer.Models.DiscountCode", "DiscountCode")
-                        .WithMany()
-                        .HasForeignKey("DiscountCodeId");
+                    b.HasOne("DomainLayer.Models.Appointment", "Appointment")
+                        .WithOne("Request")
+                        .HasForeignKey("DomainLayer.Models.Request", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DomainLayer.Models.Doctor", "doctor")
                         .WithMany("Requests")
@@ -535,17 +511,17 @@ namespace EFLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DomainLayer.Models.Patient", "patient")
-                        .WithMany("Requests")
-                        .HasForeignKey("PatientId")
+                    b.HasOne("DomainLayer.Models.ApplicationUser", "User")
+                        .WithMany("requests")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DiscountCode");
+                    b.Navigation("Appointment");
+
+                    b.Navigation("User");
 
                     b.Navigation("doctor");
-
-                    b.Navigation("patient");
                 });
 
             modelBuilder.Entity("DomainLayer.Models.Times", b =>
@@ -610,46 +586,30 @@ namespace EFLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DomainLayer.Models.UserRole", b =>
-                {
-                    b.HasOne("DomainLayer.Models.ApplicationUser", null)
-                        .WithMany("UserRoles")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("DomainLayer.Models.ApplicationRole", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId1");
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("DomainLayer.Models.ApplicationRole", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
-
             modelBuilder.Entity("DomainLayer.Models.ApplicationUser", b =>
                 {
                     b.Navigation("DoctorProfile");
 
-                    b.Navigation("PatientProfile");
-
-                    b.Navigation("UserRoles");
+                    b.Navigation("requests");
                 });
 
             modelBuilder.Entity("DomainLayer.Models.Appointment", b =>
                 {
+                    b.Navigation("Request");
+
                     b.Navigation("times");
                 });
 
             modelBuilder.Entity("DomainLayer.Models.Doctor", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Requests");
                 });
 
-            modelBuilder.Entity("DomainLayer.Models.Patient", b =>
+            modelBuilder.Entity("DomainLayer.Models.Request", b =>
                 {
-                    b.Navigation("Requests");
+                    b.Navigation("DiscountCode");
                 });
 
             modelBuilder.Entity("DomainLayer.Models.Specialization", b =>

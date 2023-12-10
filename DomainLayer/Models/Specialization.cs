@@ -9,7 +9,9 @@
 
             
             public ICollection<Doctor>? Doctors { get; set; }
-        }
+
+       
+    }
 
     
 }

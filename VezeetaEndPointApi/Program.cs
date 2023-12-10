@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using DomainLayer.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace VezeetaEndPointApi
 {
@@ -23,7 +25,39 @@ namespace VezeetaEndPointApi
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(
+            //    options=>
+            //{
+            //    options.AddSecurityDefinition("oauth2", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            //    {
+
+            //        In=Microsoft.OpenApi.Models.ParameterLocation.Header,
+            //        Name="Authorization",
+            //        Type=Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+
+
+
+            //    });
+            //    options.OperationFilter<SecurityRequirementsOperationFilter>();
+                
+                
+                
+                
+                
+            
+            
+            
+            
+            
+            //}
+            
+            
+            
+            
+            );
+                
+            
+           
            
             //add DB Context 
             builder.Services.AddDbContext<MyContext>(o =>
@@ -40,6 +74,10 @@ namespace VezeetaEndPointApi
             builder.Services.AddScoped<RoleManager<IdentityRole>>();
             builder.Services.AddScoped<RoleInitializer>();
             builder.Services.AddScoped<IDoctorRepo,DoctorRepo>();
+            builder.Services.AddScoped<IRequestRepo,RequestRepo>();
+            builder.Services.AddScoped<IPatientRepo,PatientRepo>();
+            builder.Services.AddScoped<IDiscountRepo,DiscountCodeRepo>();
+            builder.Services.AddScoped<IAppointmentRepo,AppointmentRepo>();
 
 
             //JWT Configurations
@@ -61,13 +99,7 @@ namespace VezeetaEndPointApi
                     };
                 });
 
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-                options.AddPolicy("PatientOrAdmin", policy => policy.RequireRole("Patient", "Admin"));
-                options.AddPolicy("Patient", policy => policy.RequireRole("Patient"));
-                options.AddPolicy("Doctor", policy => policy.RequireRole("Doctor"));
-            });
+           
 
 
 
@@ -77,7 +109,7 @@ namespace VezeetaEndPointApi
             using var scope = app.Services.CreateScope();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
            
-            await SeedRolesAsync(roleManager);
+        
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -87,8 +119,8 @@ namespace VezeetaEndPointApi
             }
 
             app.UseHttpsRedirection();
+            app.UseRouting();   
             app.UseAuthentication();
-
             app.UseAuthorization();
             app.UseCors(options =>
             {
@@ -104,18 +136,7 @@ namespace VezeetaEndPointApi
 
             app.Run();
         }
-        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
-        {
-            string[] roleNames = { "Admin", "Doctor", "Patient" };
-
-            foreach (var roleName in roleNames)
-            {
-                if (!await roleManager.RoleExistsAsync(roleName))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(roleName));
-                }
-            }
-        }
+       
 
     }
 }

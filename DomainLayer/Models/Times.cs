@@ -12,6 +12,7 @@ namespace DomainLayer.Models
         public TimeSpan Time { get; set; }
         public int AppointmentId { get; set; }
         public virtual Appointment ?Appointments { get; set; }
+        
        
 
 

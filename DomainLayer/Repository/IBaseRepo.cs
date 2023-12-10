@@ -12,7 +12,7 @@ namespace DomainLayer.Repository
         T GettById(int id);
         void ADD(T item);
         void UPDATE(T item,int id);
-        void DELETE(int id);
+        void DELETE(string id);
        
         
 

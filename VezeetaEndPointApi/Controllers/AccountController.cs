@@ -29,92 +29,100 @@ namespace VezeetaEndPointApi.Controllers
             this.userManager = userManager;
             this.config = config;
         }
-       
+       //patient
         [HttpPost("register")]
-        public async Task<IActionResult> RegistrationAsync(RegisterDto registerUserDto)
+        public async Task<IActionResult> RegistrationAsync([FromForm]RegisterDto registerUserDto)
         {
             if (ModelState.IsValid)
             {
-                ApplicationUser user = new ApplicationUser
-                {
-                   
-                    UserName = registerUserDto.UserName,
-                    SecurityStamp = Guid.NewGuid().ToString(),
-                    Email = registerUserDto.Email,
-                    Type = registerUserDto.AccountType,
-                    EmailConfirmed = true,
-                    NormalizedEmail = registerUserDto.Email.ToUpper(),
-                    NormalizedUserName = registerUserDto.Email.ToUpper(),
-                    LockoutEnabled = true
-                };
-                //var hasher = new PasswordHasher<ApplicationUser>();
-                //user.PasswordHash = hasher.HashPassword(user, registerUserDto.Password);
-                //builder.Entity<ApplicationUser>().HasData(user);
+                
+                    ApplicationUser user = new ApplicationUser();
+                                      
+                    user.FullName = registerUserDto.FullName;
+                user.UserName = registerUserDto.FullName.ToLower();
+                    user.PhoneNumber = registerUserDto.Phone;
+                    user.Gender = registerUserDto.Gender;
+                    user.Image = registerUserDto.Image;
+                    user.Email = registerUserDto.Email;
+                    user.DateOfBirth= registerUserDto.DateOfBirth;  
+                    user.SecurityStamp = Guid.NewGuid().ToString();
+                    user.Type = AccountType.Patient;
+                    user.EmailConfirmed = true;
+                    user.LockoutEnabled = true;
+                    
 
-                IdentityResult result = await userManager.CreateAsync(user, registerUserDto.Password);
-
-                switch (registerUserDto.AccountType)
-                {
-                    case AccountType.Patient:
-                        var patientDetails = new Patient
-                        {
-                            ApplicationUser = user,
-                           PatientId = Guid.NewGuid().ToString()
-                        };
-
-                        // Add patient to Patients table
-                        myContext.Patients.Add(patientDetails);
-                        break;
-                    default:
-                        return BadRequest("Invalid user type");
-                }
+                    IdentityResult result = await userManager.CreateAsync(user, registerUserDto.Password);
 
 
 
-                // await myContext.SaveChangesAsync();
+
+
+
+
 
                 if (result.Succeeded)
                 {
-                    var role = registerUserDto.AccountType.ToString();
+                    //var role = user.Type.ToString();
 
-                    // Check if the role exists, and create it if it doesn't
-                    var roleExists = await roleManager.RoleExistsAsync(role);
-                    if (!roleExists)
+                    //var roleExists = await roleManager.RoleExistsAsync(role);
+
+                    //if (!roleExists)
+                    //{
+                    //    var newRole = new IdentityRole(role);
+                    //    var roleCreationResult = await roleManager.CreateAsync(newRole);
+
+                    //    if (!roleCreationResult.Succeeded)
+                    //    {
+                    //        return BadRequest("Role creation failed.");
+                    //    }
+                    //}
+                    ApplicationUser createdUser = await userManager.FindByNameAsync(user.UserName);
+                    var roleAssignmentResult = await userManager.AddToRoleAsync(createdUser, "Patient");
+
+                    if (roleAssignmentResult.Succeeded)
                     {
-                        var newRole = new IdentityRole(role);
-                        await roleManager.CreateAsync(newRole);
+                        return Ok("Account added successfully");
                     }
-
-                    // Assign the role to the user
-                    await userManager.AddToRoleAsync(user, role);
-
-                    return Ok("Account added successfully");
+                    else
+                    {
+                        return BadRequest("Role assignment failed.");
+                    }
                 }
-
-                return BadRequest(result.Errors.FirstOrDefault());
+                else
+                {
+                    return BadRequest(result.Errors.FirstOrDefault()?.Description);
+                }
             }
 
             return BadRequest(ModelState);
         }
 
 
-
+        
         [HttpPost("login")]
+       
         public async Task<IActionResult> Login([FromForm] LoginDto model)
         {
-            var user = await userManager.FindByEmailAsync(model.Email);
+            ApplicationUser user = await userManager.FindByEmailAsync(model.Email);
             if (user != null && await userManager.CheckPasswordAsync(user, model.password))
             {
-               
 
-                var authClaims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
 
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Secret"]));
-                var token = new JwtSecurityToken(
+                var authClaims = new List<Claim>();
+
+                authClaims.Add(new Claim(ClaimTypes.Name, user.Email));
+                authClaims.Add( new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+                //get roles
+               var roleuser=  await userManager.FindByNameAsync( user.UserName );
+                var roles = await userManager.GetRolesAsync(roleuser);
+                foreach (var role in roles) {
+
+                    authClaims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                SecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Secret"]));
+                JwtSecurityToken token = new JwtSecurityToken(
                     issuer: config["JWT:ValidIssuer"],
                     audience: config["JWT:ValidAudience"],
                     expires: DateTime.UtcNow.AddHours(1),

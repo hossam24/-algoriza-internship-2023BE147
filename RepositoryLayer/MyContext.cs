@@ -14,7 +14,7 @@ namespace EFLayer
         : base(options)
         { }
         public DbSet<Doctor> Doctors { get; set; }
-        public DbSet<Patient> Patients { get; set; }
+       // public DbSet<Patient> Patients { get; set; }
         public DbSet<DiscountCode> DiscountCodes { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Specialization> Specializations { get; set; }
@@ -24,10 +24,10 @@ namespace EFLayer
         {
             base.OnModelCreating(builder);
              string ADMIN_ID = "76f86073-b51c-47c4-b7fa-731628055ebb";
-            string ROLE_ID = "5ab58670-8727-4b67-85d5-4199912a70bf";
+             string ROLE_ID = Guid.NewGuid().ToString();
 
 
-            //  Create an admin user
+                   //  Create an admin user
             ApplicationUser admin = new ApplicationUser
             {
                 Id = ADMIN_ID,
@@ -36,35 +36,26 @@ namespace EFLayer
                 EmailConfirmed = true,
                 UserName = "admin",
                 NormalizedUserName = "admin@gmail.com".ToUpper(),
-                LockoutEnabled = true
+                LockoutEnabled = true,
+                Type=AccountType.Admin
+                
             };
             var hasher = new PasswordHasher<ApplicationUser>();
             admin.PasswordHash = hasher.HashPassword(admin, password: "@Admin123");
+            builder.Entity<ApplicationUser>().HasData(admin);
 
 
-            builder.Entity<ApplicationRole>().HasData(
-     new ApplicationRole
-     {
-         Id = ROLE_ID,
-         Name = "Admin",
-         NormalizedName = "ADMIN",
-         Date = DateTime.Now.ToString()
-     });
 
-            //Connect An admin to Role Admin
             builder.Entity<IdentityUserRole<string>>().HasData(
-                new IdentityUserRole<string>
-                { RoleId = ROLE_ID, UserId = ADMIN_ID });
+             new IdentityUserRole<string>
+             { RoleId = ROLE_ID, UserId = ADMIN_ID });
 
-
-
-            //create static role 
             builder.Entity<ApplicationRole>().HasData(
                new ApplicationRole
                {
                    Id = Guid.NewGuid().ToString(),
                    Name = "Patient",
-                   NormalizedName = "Patient",
+                   NormalizedName = "PATIENT",
                    Date = DateTime.Now.ToString()
                });
             builder.Entity<ApplicationRole>().HasData(
@@ -74,11 +65,12 @@ namespace EFLayer
                     Name = "Doctor",
                     NormalizedName = "Doctor",
                     Date = DateTime.Now.ToString()
-                });  
-          
+                });
+
+         
 
         }
-      
+
 
     }
 }
@@ -89,22 +81,3 @@ namespace EFLayer
 
 
 
-
-//public async Task SeedRoles(ModelBuilder modelBuilder)
-//{
-//    string[] roleNames = { "Admin", "Doctor", "Patient" };
-
-//    foreach (var roleName in roleNames)
-//    {
-//        modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
-//        {
-//            Id = Guid.NewGuid().ToString(),
-//            Name = roleName,
-//            NormalizedName = roleName.ToUpper()
-//        });
-//    }
-
-//}
-
-
-//   SeedRoles(builder).GetAwaiter().GetResult();

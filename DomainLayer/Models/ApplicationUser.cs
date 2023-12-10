@@ -50,34 +50,24 @@ namespace DomainLayer.Models
     {
         public string? Image { get; set; }
         public string ?FullName { get; set; }
-        public string ?Email { get; set; }
-        public string ?Phone { get; set; }
+    
         public Gender ?Gender { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public AccountType Type { get; set; }
+       
         public Doctor? DoctorProfile { get; set; } 
-        public Patient? PatientProfile { get; set; }
         public string? RefreshToken { get; set; }
-        public ICollection<UserRole> UserRoles { get; set; }
+       // public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<Request>? requests { get; set; }
+       
+        public bool? IsDeleted { get; set; } = false;
 
-
-
-    }
-
-    public class UserRole : IdentityUserRole<string>
-    {
-        public virtual ApplicationRole Role { get; set; }
-    }
-
-    public class ApplicationRoleClaim : IdentityRoleClaim<string>
-    {
-        public virtual ApplicationRole Role { get; set; }
     }
 
     public class ApplicationRole : IdentityRole<string>
     {
         public string? Date { get; set; }
-        public ICollection<UserRole> UserRoles { get; set; }
+        
     }
 
 }

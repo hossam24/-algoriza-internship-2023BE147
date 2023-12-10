@@ -24,9 +24,9 @@ namespace EFLayer.Repository
             
         }
 
-        public void DELETE(int id)
+        public void DELETE(string id)
         {
-          context.Remove(id);
+          context.Remove(context.Set<T>());
             context.SaveChanges();  
         }
 
