@@ -68,13 +68,13 @@ namespace EFLayer.Repository
 
         }
 
-        public List<RequestPatientDTO> Bookingofboctor(string doctorId,int pageSize, int pageNumber)
+        public List<RequestPatientDTO> Bookingofboctor(int pageSize, int pageNumber)
         {
             var bookings = myContext.Requests
                 .Include(r => r.User)
                 .Include(r => r.Appointment)
                     .ThenInclude(r => r.times)
-                .Where(r => r.DoctorId == doctorId)
+              
                 .OrderByDescending(r => r.Appointment.Day)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -94,13 +94,13 @@ namespace EFLayer.Repository
             return bookings;
         }
 
-        public List<RequestDto> BookingofPatient(string PatientId)
+        public List<RequestDto> BookingofPatient()
         {
             var bookings = myContext.Requests
                 .Include(r => r.User)
                 .Include(r => r.Appointment)
                     .ThenInclude(r => r.times)
-                .Where(r => r.UserId == PatientId)
+               
                 .OrderByDescending(r => r.Appointment.Day)
                 .Select(r => new RequestDto
                 {

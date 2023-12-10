@@ -1,12 +1,16 @@
 ﻿using DomainLayer.DTO;
 using DomainLayer.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace VezeetaEndPointApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Doctor")]
+
     //doctor
     public class AppointmentController : ControllerBase
     {
@@ -58,6 +62,28 @@ namespace VezeetaEndPointApi.Controllers
 
             }
 
+
+
+
+        }
+
+        [HttpDelete("DeleteAppointment")]
+        public IActionResult delete(int appointmentId, TimeSpan time) {
+            try
+            {
+                appointmentrepo.Delete(appointmentId,time);
+                return Ok(true);
+
+
+            }
+            catch  {
+               
+
+                return Ok(false);
+
+
+
+            }
 
 
 

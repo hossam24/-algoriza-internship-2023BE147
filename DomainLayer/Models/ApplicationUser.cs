@@ -57,7 +57,7 @@ namespace DomainLayer.Models
        
         public Doctor? DoctorProfile { get; set; } 
         public string? RefreshToken { get; set; }
-       // public ICollection<UserRole> UserRoles { get; set; }
+ 
         public ICollection<Request>? requests { get; set; }
        
         public bool? IsDeleted { get; set; } = false;

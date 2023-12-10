@@ -1,12 +1,16 @@
 ﻿using DomainLayer.Repository;
 using EFLayer.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace VezeetaEndPointApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
+
     public class DashBoardController : ControllerBase
     {
         private readonly IDoctorRepo doctorRepo;

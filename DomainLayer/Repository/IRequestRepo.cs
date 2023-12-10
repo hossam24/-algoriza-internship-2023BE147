@@ -11,8 +11,8 @@ namespace DomainLayer.Repository
     {
         bool HasRequests(string doctorId);
        RequestCountDto NumOfRequests();
-        List<RequestPatientDTO> Bookingofboctor(string doctorId, int pageSize, int pageNumber);
-        List<RequestDto> BookingofPatient(string patientId);
+        List<RequestPatientDTO> Bookingofboctor( int pageSize, int pageNumber);
+        List<RequestDto> BookingofPatient();
         void CancelBooking(int id);
 
         void ADDRequest(AddRequestDTO item);

@@ -1,13 +1,18 @@
 ﻿using DomainLayer.DTO;
 using DomainLayer.Models;
 using DomainLayer.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace VezeetaEndPointApi.Controllers
 {
+    //setting For Admin 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
+
     public class SettingController : ControllerBase
     {
         private readonly IDiscountRepo discountRepo;

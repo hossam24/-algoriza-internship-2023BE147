@@ -114,7 +114,7 @@ namespace VezeetaEndPointApi.Controllers
                 authClaims.Add( new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
                 //get roles
-               var roleuser=  await userManager.FindByNameAsync( user.UserName );
+               var roleuser=  await userManager.FindByEmailAsync( user.Email );
                 var roles = await userManager.GetRolesAsync(roleuser);
                 foreach (var role in roles) {
 
@@ -125,14 +125,17 @@ namespace VezeetaEndPointApi.Controllers
                 JwtSecurityToken token = new JwtSecurityToken(
                     issuer: config["JWT:ValidIssuer"],
                     audience: config["JWT:ValidAudience"],
-                    expires: DateTime.UtcNow.AddHours(1),
+                    expires: DateTime.UtcNow.AddHours(4),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
 
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var serializedToken = tokenHandler.WriteToken(token);
+
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    token = serializedToken,
                     expiration = token.ValidTo
                 });
             }

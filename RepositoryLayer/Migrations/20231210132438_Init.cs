@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace EFLayer.Migrations
 {
     /// <inheritdoc />
@@ -13,21 +11,6 @@ namespace EFLayer.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "ApplicationRole",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Date = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationRole", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -319,19 +302,9 @@ namespace EFLayer.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "ApplicationRole",
-                columns: new[] { "Id", "ConcurrencyStamp", "Date", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "1", null, null, "Admin", "ADMIN" },
-                    { "2", null, null, "Doctor", "DOCTOR" },
-                    { "3", null, null, "Patient", "PATIENT" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DateOfBirth", "Email", "EmailConfirmed", "FullName", "Gender", "Image", "IsDeleted", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "SecurityStamp", "TwoFactorEnabled", "Type", "UserName" },
-                values: new object[] { "76f86073-b51c-47c4-b7fa-731628055ebb", 0, "4266d9ad-2234-4b3c-926e-3ef2a031807e", null, "admin@gmail.com", true, null, null, null, false, true, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEDp7h29XMOxsL/ceO3ZvCVIits3U0BR4N5pN/ykDTSMVJGqwUJKA+0KuC8W/t9xd0w==", null, false, null, "3d9356ed-2ed5-49e7-b445-bafdfe2a4c0a", false, 0, "admin" });
+                values: new object[] { "76f86073-b51c-47c4-b7fa-731628055ebb", 0, "0b775dd7-8b27-4307-84cf-6d8d80e0e960", null, "admin@gmail.com", true, null, null, null, false, true, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEOhVz8IUL7IAFLShvuRWwRHQj8WwnMedvEx67pgLjCuJ1Oulfa2ixrI+5syHLrUJRg==", null, false, null, "8f249a0f-3b90-43cc-b00b-06c71d14d0bf", false, 0, "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_DoctorId",
@@ -413,9 +386,6 @@ namespace EFLayer.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ApplicationRole");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

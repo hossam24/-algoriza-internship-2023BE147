@@ -11,6 +11,8 @@ namespace VezeetaEndPointApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
+
     public class PatientController : ControllerBase
     {
         private readonly IPatientRepo patientRepo;
@@ -23,7 +25,7 @@ namespace VezeetaEndPointApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Patient")]
+
         public IActionResult GetAll()
         {
             
@@ -35,6 +37,7 @@ namespace VezeetaEndPointApi.Controllers
 
 
         [HttpGet("{id}")]
+
         public IActionResult GetById([FromRoute] string id)
         {
 

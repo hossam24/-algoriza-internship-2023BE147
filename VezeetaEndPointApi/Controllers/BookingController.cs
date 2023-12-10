@@ -2,8 +2,10 @@
 using DomainLayer.DTO;
 using DomainLayer.Repository;
 using EFLayer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Runtime.CompilerServices;
 
 namespace VezeetaEndPointApi.Controllers
@@ -22,18 +24,22 @@ namespace VezeetaEndPointApi.Controllers
         }
         //doctor
         [HttpGet("GetAllBookingOfThisDoctor")]
-        public IActionResult GetAllBooking(string doctorId, DateTime date, int pageSize = 10, int pageNumber = 1)
+        [Authorize(Roles = "Doctor")]
+
+        public IActionResult GetAllBooking( DateTime date, int pageSize = 10, int pageNumber = 1)
         {
-            var bookings = requestRepo.Bookingofboctor(doctorId,pageSize, pageNumber);
+            var bookings = requestRepo.Bookingofboctor(pageSize, pageNumber);
             return Ok(bookings);
         }
         //patient
         [HttpGet("GetAllBookingOfThisPatient")]
-        public IActionResult GetAllbookingpatient(string id) {
+        [Authorize(Roles = "Patient")]
+
+        public IActionResult GetAllbookingpatient() {
 
 
             try {
-                var bookings = requestRepo.BookingofPatient(id);
+                var bookings = requestRepo.BookingofPatient();
                 return Ok(bookings);
 
             }
@@ -45,6 +51,8 @@ namespace VezeetaEndPointApi.Controllers
         }
      //patient
         [HttpPut("cancel booking")]
+        [Authorize(Roles = "Patient")]
+
         public IActionResult cancelled(int id)
         {
             try
@@ -61,6 +69,8 @@ namespace VezeetaEndPointApi.Controllers
 
         //patient
         [HttpPost("booking")]
+        [Authorize(Roles = "Patient")]
+
         public IActionResult add([FromForm]AddRequestDTO addRequestDTO) {
 
             try
@@ -77,6 +87,8 @@ namespace VezeetaEndPointApi.Controllers
 
         //for doctor
         [HttpPut("ConfirmCheckup")]
+        [Authorize(Roles = "Doctor")]
+
         public IActionResult confirmcheckup(int id)
         {
             try

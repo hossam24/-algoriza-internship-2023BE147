@@ -22,48 +22,6 @@ namespace EFLayer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DomainLayer.Models.ApplicationRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ApplicationRole");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            Name = "Doctor",
-                            NormalizedName = "DOCTOR"
-                        },
-                        new
-                        {
-                            Id = "3",
-                            Name = "Patient",
-                            NormalizedName = "PATIENT"
-                        });
-                });
-
             modelBuilder.Entity("DomainLayer.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -154,16 +112,16 @@ namespace EFLayer.Migrations
                         {
                             Id = "76f86073-b51c-47c4-b7fa-731628055ebb",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4266d9ad-2234-4b3c-926e-3ef2a031807e",
+                            ConcurrencyStamp = "0b775dd7-8b27-4307-84cf-6d8d80e0e960",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             IsDeleted = false,
                             LockoutEnabled = true,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDp7h29XMOxsL/ceO3ZvCVIits3U0BR4N5pN/ykDTSMVJGqwUJKA+0KuC8W/t9xd0w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOhVz8IUL7IAFLShvuRWwRHQj8WwnMedvEx67pgLjCuJ1Oulfa2ixrI+5syHLrUJRg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3d9356ed-2ed5-49e7-b445-bafdfe2a4c0a",
+                            SecurityStamp = "8f249a0f-3b90-43cc-b00b-06c71d14d0bf",
                             TwoFactorEnabled = false,
                             Type = 0,
                             UserName = "admin"
